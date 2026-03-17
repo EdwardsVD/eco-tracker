@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECO Tracker · Green Habits</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #0b3b2c 0%, #1b6e4f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 40px;
+      padding: 28px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .sub {
+      color: #cfeadb;
+      margin-bottom: 28px;
+      font-size: 1.1rem;
+      border-left: 4px solid #f9c74f;
+      padding-left: 18px;
+    }
+    .input-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .input-row input, .input-row select {
+      flex: 1;
+      padding: 16px 20px;
+      border: none;
+      border-radius: 60px;
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 1rem;
+      outline: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .input-row select {
+      background: white;
+      color: #1e3a2f;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .input-row button {
+      background: #f9c74f;
+      border: none;
+      border-radius: 60px;
+      padding: 16px 32px;
+      font-weight: bold;
+      color: #0b3b2c;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border: 1px solid #f2b807;
+      min-width: 120px;
+    }
+    .input-row button:hover {
+      background: #f2b807;
+      transform: scale(1.02);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 24px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #b7e4cf;
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .progress-section {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 60px;
+      padding: 14px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .progress-label {
+      font-weight: 600;
+      color: #f9c74f;
+      min-width: 100px;
+    }
+    .progress-bar-bg {
+      flex: 1;
+      height: 18px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 30px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #f9c74f;
+      border-radius: 30px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+    .filter-section {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-chip {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 18px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .filter-chip.active {
+      background: #f9c74f;
+      color: #0b3b2c;
+      border-color: #f9c74f;
+    }
+    .task-list {
+      list-style: none;
+      margin-top: 8px;
+    }
+    .task-item {
+      background: white;
+      border-radius: 60px;
+      padding: 14px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      transition: 0.2s;
+      border: 1px solid #e0e0e0;
+      animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .task-item:hover {
+      transform: translateX(6px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.15);
+    }
+    .task-category {
+      width: 40px;
+      height: 40px;
+      border-radius: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      background: #e8f3ed;
+      color: #1e5a3e;
+    }
+    .task-content {
+      flex: 1;
+    }
+    .task-title {
+      font-weight: 600;
+      color: #1e3a2f;
+      margin-bottom: 4px;
+    }
+    .task-meta {
+      font-size: 0.75rem;
+      color: #527a66;
+      display: flex;
+      gap: 12px;
+    }
+    .task-check {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+      accent-color: #1b6e4f;
+    }
+    .task-title.completed {
+      text-decoration: line-through;
+      color: #6b9080;
+    }
+    .delete-btn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: #b23b2c;
+      opacity: 0.7;
+      transition: 0.2s;
+      padding: 0 6px;
+    }
+    .delete-btn:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .empty-message {
+      text-align: center;
+      color: #cfeadb;
+      padding: 36px 0;
+      font-style: italic;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #a8d8bf;
+      font-size: 0.85rem;
+      border-top: 1px dashed rgba(255,255,255,0.2);
+      padding-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌱 ECO Tracker</h1>
+    <div class="sub">Track your daily green habits · Open source · For the planet</div>
+
+    <div class="input-panel">
+      <div class="input-row">
+        <input type="text" id="taskInput" placeholder="e.g., Turn off lights, ride bike, recycle..." autofocus>
+        <select id="categorySelect">
+          <option value="energy">⚡ Energy</option>
+          <option value="transport">🚲 Transport</option>
+          <option value="waste">♻️ Waste</option>
+          <option value="other">🌿 Other</option>
+        </select>
+        <button id="addBtn">➕ Add</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-label">Total actions</div>
+        <div class="stat-value" id="totalCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="completedCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Energy</div>
+        <div class="stat-value" id="energyCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Transport</div>
+        <div class="stat-value" id="transportCount">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Waste</div>
+        <div class="stat-value" id="wasteCount">0</div>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <span class="progress-label">🌍 Eco Score</span>
+      <div class="progress-bar-bg">
+        <div class="progress-fill" id="ecoProgress" style="width:0%"></div>
+      </div>
+      <span id="scorePercent">0%</span>
+    </div>
+
+    <div class="filter-section" id="filterContainer">
+      <span class="filter-chip active" data-filter="all">All</span>
+      <span class="filter-chip" data-filter="active">Active</span>
+      <span class="filter-chip" data-filter="completed">Completed</span>
+      <span class="filter-chip" data-filter="energy">⚡ Energy</span>
+      <span class="filter-chip" data-filter="transport">🚲 Transport</span>
+      <span class="filter-chip" data-filter="waste">♻️ Waste</span>
+      <span class="filter-chip" data-filter="other">🌿 Other</span>
+    </div>
+
+    <ul class="task-list" id="taskList">
+      <li class="empty-message">✨ No tasks yet. Add your first eco action!</li>
+    </ul>
+
+    <footer>
+      💚 Open source · Every action counts
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      let tasks = [];
+      let currentFilter = 'all';
+
+      const categoryIcons = {
+        energy: '⚡',
+        transport: '🚲',
+        waste: '♻️',
+        other: '🌿'
+      };
+
+      function loadTasks() {
+        const saved = localStorage.getItem('ecoTracker');
+        if (saved) {
+          try { tasks = JSON.parse(saved); } catch { tasks = []; }
+        } else {
+          tasks = [
+            { id: Date.now() - 30000, text: 'Turn off lights for 2h', completed: false, category: 'energy' },
+            { id: Date.now() - 25000, text: 'Bike to work', completed: true, category: 'transport' },
+            { id: Date.now() - 20000, text: 'Recycle plastic bottles', completed: false, category: 'waste' },
+            { id: Date.now() - 15000, text: 'Use reusable bag', completed: true, category: 'waste' },
+            { id: Date.now() - 10000, text: 'Plant a tree', completed: false, category: 'other' }
+          ];
+        }
+        renderAll();
+      }
+
+      function saveTasks() {
+        localStorage.setItem('ecoTracker', JSON.stringify(tasks));
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      function renderAll() {
+        updateStats();
+        renderTaskList();
+        updateFilterChips();
+      }
+
+      function updateStats() {
+        const total = tasks.length;
+        const completed = tasks.filter(t => t.completed).length;
+        const energy = tasks.filter(t => t.category === 'energy').length;
+        const transport = tasks.filter(t => t.category === 'transport').length;
+        const waste = tasks.filter(t => t.category === 'waste').length;
+
+        document.getElementById('totalCount').innerText = total;
+        document.getElementById('completedCount').innerText = completed;
+        document.getElementById('energyCount').innerText = energy;
+        document.getElementById('transportCount').innerText = transport;
+        document.getElementById('wasteCount').innerText = waste;
+
+        const score = total === 0 ? 0 : Math.round((completed / total) * 100);
+        document.getElementById('scorePercent').innerText = score + '%';
+        document.getElementById('ecoProgress').style.width = score + '%';
+      }
+
+      function getFilteredTasks() {
+        if (currentFilter === 'all') return tasks;
+        if (currentFilter === 'active') return tasks.filter(t => !t.completed);
+        if (currentFilter === 'completed') return tasks.filter(t => t.completed);
+        return tasks.filter(t => t.category === currentFilter);
+      }
+
+      function renderTaskList() {
+        const filtered = getFilteredTasks();
+        const listEl = document.getElementById('taskList');
+
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<li class="empty-message">🌱 No tasks match the filter.</li>`;
+          return;
+        }
+
+        let html = '';
+        filtered.forEach(task => {
+          const icon = categoryIcons[task.category] || '🌿';
+          html += `
+            <li class="task-item" data-id="${task.id}">
+              <div class="task-category">${icon}</div>
+              <div class="task-content">
+                <div class="task-title ${task.completed ? 'completed' : ''}">${escapeHtml(task.text)}</div>
+                <div class="task-meta">${task.category}</div>
+              </div>
+              <input type="checkbox" class="task-check" ${task.completed ? 'checked' : ''}>
+              <button class="delete-btn" title="Delete">🗑️</button>
+            </li>
+          `;
+        });
+        listEl.innerHTML = html;
+
+        listEl.querySelectorAll('.task-check').forEach(chk => {
+          chk.addEventListener('change', function(e) {
+            const id = Number(this.closest('.task-item').dataset.id);
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+              task.completed = this.checked;
+              saveTasks();
+              renderAll();
+            }
+            e.stopPropagation();
+          });
+        });
+
+        listEl.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            const id = Number(this.closest('.task-item').dataset.id);
+            tasks = tasks.filter(t => t.id !== id);
+            saveTasks();
+            renderAll();
+            e.stopPropagation();
+          });
+        });
+      }
+
+      function updateFilterChips() {
+        document.querySelectorAll('.filter-chip').forEach(chip => {
+          const filter = chip.dataset.filter;
+          if (filter === currentFilter) chip.classList.add('active');
+          else chip.classList.remove('active');
+        });
+      }
+
+      document.getElementById('addBtn').addEventListener('click', () => {
+        const input = document.getElementById('taskInput');
+        const text = input.value.trim();
+        if (!text) {
+          alert('Please enter an activity.');
+          return;
+        }
+        const category = document.getElementById('categorySelect').value;
+        const newTask = {
+          id: Date.now(),
+          text: text,
+          completed: false,
+          category: category
+        };
+        tasks.push(newTask);
+        saveTasks();
+        renderAll();
+        input.value = '';
+        input.focus();
+      });
+
+      document.getElementById('taskInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('addBtn').click();
+      });
+
+      document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+          currentFilter = this.dataset.filter;
+          updateFilterChips();
+          renderTaskList();
+        });
+      });
+
+      loadTasks();
+    })();
+  </script>
+</body>
+</html>
